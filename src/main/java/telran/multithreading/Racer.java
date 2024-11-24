@@ -28,6 +28,6 @@ public class Racer extends Thread {
         long finishTime = System.currentTimeMillis();
         long runningTime = finishTime - race.getStartTime();
 
-        race.addResult(new RaceResult(number, runningTime));
+        race.addResult(number, runningTime);
     }
 }

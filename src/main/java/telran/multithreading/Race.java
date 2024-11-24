@@ -1,14 +1,15 @@
 package telran.multithreading;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Race {
     private int distance;
     private int minSleep;
     private int maxSleep;
     private long startTime;
-    private List<RaceResult> results = new CopyOnWriteArrayList<>();
+    private List<RaceResult> results = Collections.synchronizedList(new ArrayList<>());
 
     public Race(int distance, int minSleep, int maxSleep) {
         this.distance = distance;
@@ -36,9 +37,9 @@ public class Race {
         return maxSleep;
     }
 
-    public void addResult(RaceResult result) {
-        synchronized (results) {
-            results.add(result);
+    public void addResult(int racerNumber, long runningTime) {
+        synchronized (this) {
+            results.add(new RaceResult(racerNumber, runningTime));
         }
     }
 
