@@ -1,5 +1,7 @@
 package telran.multithreading;
 
+import java.util.Random;
+
 public class Racer extends Thread {
     private Race race;
     private int number;
@@ -11,16 +13,21 @@ public class Racer extends Thread {
 
     @Override
     public void run() {
-        for (int i = 0; i < race.getDistance(); i++) {
-            try {
-                Thread.sleep(race.getRandomSleepTime()); 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        int minSleep = race.getMinSleep();
+        int maxSleep = race.getMaxSleep();
+        int distance = race.getDistance();
+        Random random = new Random();
 
-            System.out.printf("Racer #%d completed step %d%n", number, i + 1);
+        for (int i = 0; i < distance; i++) {
+            try {
+                sleep(random.nextInt(minSleep, maxSleep + 1));
+                System.out.printf("Racer %d - step %d\n", number, i + 1);
+            } catch (InterruptedException e) {}
         }
 
-        race.setWinner(number);
+        long finishTime = System.currentTimeMillis();
+        long runningTime = finishTime - race.getStartTime();
+
+        race.addResult(new RaceResult(number, runningTime));
     }
 }

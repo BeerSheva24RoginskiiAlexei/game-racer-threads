@@ -1,30 +1,48 @@
 package telran.multithreading;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Race {
     private int distance;
-    private int minSleepTime = 100; 
-    private int maxSleepTime = 300; 
-    private AtomicInteger winner = new AtomicInteger(0); 
+    private int minSleep;
+    private int maxSleep;
+    private long startTime;
+    private List<RaceResult> results = new CopyOnWriteArrayList<>();
 
-    public Race(int distance) {
+    public Race(int distance, int minSleep, int maxSleep) {
         this.distance = distance;
+        this.minSleep = minSleep;
+        this.maxSleep = maxSleep;
+    }
+
+    public synchronized void startRace() {
+        this.startTime = System.currentTimeMillis();
+    }
+
+    public long getStartTime() {
+        return startTime;
     }
 
     public int getDistance() {
         return distance;
     }
 
-    public int getRandomSleepTime() {
-        return minSleepTime + (int) (Math.random() * (maxSleepTime - minSleepTime));
+    public int getMinSleep() {
+        return minSleep;
     }
 
-    public void setWinner(int racerNumber) {
-        winner.compareAndSet(0, racerNumber); 
+    public int getMaxSleep() {
+        return maxSleep;
     }
 
-    public int getWinner() {
-        return winner.get();
+    public void addResult(RaceResult result) {
+        synchronized (results) {
+            results.add(result);
+        }
+    }
+
+    public List<RaceResult> getResults() {
+        return results;
     }
 }
